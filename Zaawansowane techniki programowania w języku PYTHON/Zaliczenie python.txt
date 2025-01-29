@@ -1,0 +1,59 @@
+from multiprocessing import Process
+from threading import Thread
+import random
+
+
+tablica_dod = random.sample(range(0, 1000), 8)
+tablica_male = random.sample(range(0, 1000), 8)
+
+
+
+def tab(poz, iteration):
+    global tablica_dod
+    tablica_dod[poz] = tablica_dod[poz] + tablica_dod[poz + (int(pow(2,iteration)))] # Przeskok
+    tablica_dod[poz + (int(pow(2, iteration)))] = 0 # Zamiana liczby po prawej stronie na 0 po zsumowaniu
+
+
+if __name__ == "__main__":
+    threads = []
+    i = 0
+    j = 2
+    watki = 4
+    print(tablica_dod)
+    while (i < 3):
+        threads.clear()
+        for n in range(0, watki * j, j):
+            threads.append(Process(target=tab, args=(n, i,)))
+        for n in threads:
+            n.start()
+        for n in threads:
+            n.join()
+        i += 1
+        j = j * 2
+        watki = int(watki / 2)
+        print(tablica_dod)
+    print("\nSuma liczb: ",tablica_dod[0],"\n")
+
+
+
+    def male(poz, iteration):
+        global tablica_male
+        tablica_male[poz] = min(tablica_male[poz],tablica_male[poz + (int(pow(2, iteration)))])  # Przeskok
+        tablica_male[poz + (int(pow(2, iteration)))] = 0  # Zamiana większej liczby na 0
+    i = 0
+    j = 2
+    liczba = 4
+    print(tablica_male)
+    while (i < 3):
+        threads.clear()
+        for n in range(0, liczba * j, j):
+            threads.append(Process(target=male, args=(n, i,)))
+        for n in threads:
+            n.start()
+        for n in threads:
+            n.join()
+        i += 1
+        j = j * 2
+        liczba = int(liczba / 2)
+        print(tablica_male)
+    print("\nNajmniejszą liczbą w zbiorach jest liczba:",tablica_male[0])
